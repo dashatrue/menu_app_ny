@@ -1,0 +1,31 @@
+# Environment variables
+.env
+.env.local
+
+# Django
+*.sqlite3
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Python
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Static files (если собираете статику)
+staticfiles/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
