@@ -1,0 +1,631 @@
+<!-- templates/menu_app/menu_app.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎄 Новогоднее Меню 🎄</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Новогодние иконки -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Новогодний фон */
+        body {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 50%, #0d1b2a 100%);
+            background-attachment: fixed;
+            color: #e0e1dd;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Снег */
+        .snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .snow {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+
+        /* Гирлянда */
+        .garland {
+            position: fixed;
+            top: 20px;
+            width: 100%;
+            height: 40px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .light {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 15px;
+            animation: blink 1.5s infinite;
+            position: relative;
+            top: 0;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Основной контейнер */
+        .container {
+            background: rgba(13, 27, 42, 0.85);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 80px;
+            margin-bottom: 50px;
+            border: 3px solid #ffd700;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 3;
+        }
+
+        /* Заголовок */
+        .title-container {
+            background: linear-gradient(45deg, #1a4d80, #0a2d52);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            border: 2px solid #ffd700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-container::before {
+            content: "🎄 🎅 🎄";
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 24px;
+            opacity: 0.7;
+        }
+
+        .title-container::after {
+            content: "✨ ❄️ ✨";
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.7;
+        }
+
+        h1 {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Карточки блюд */
+        .dish-card {
+            background: linear-gradient(145deg, #1e3a5f, #152642);
+            border: 2px solid #3a86ff;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            position: relative;
+        }
+
+        .dish-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #ffd700;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+        }
+
+        .dish-card.selected {
+            border-color: #ffd700;
+            background: linear-gradient(145deg, #2a4d7a, #1a3a5a);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .dish-card.selected::after {
+            content: "🎁 ВЫБРАНО!";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffd700;
+            color: #0d1b2a;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ФИКСИРОВАННЫЙ РАЗМЕР КАРТИНОК - ИЗМЕНЕНИЕ №1 */
+        .card-img-top {
+            width: 100%;           /* Занимает всю ширину карточки */
+            height: 200px;         /* Фиксированная высота */
+            object-fit: contain;   /* Вместо cover - картинка не обрезается */
+            background-color: #1a3a5a;  /* Фон если картинка меньше */
+            border-bottom: 2px solid #3a86ff;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        /* Кнопки */
+        .btn-outline-primary {
+            color: #4cc9f0;
+            border-color: #4cc9f0;
+            background: transparent;
+            transition: all 0.3s;
+        }
+
+        .btn-outline-primary:hover {
+            background: #4cc9f0;
+            color: #0d1b2a;
+            border-color: #4cc9f0;
+            transform: scale(1.05);
+        }
+
+        /* Форма данных */
+        .form-card {
+            background: linear-gradient(145deg, #1e3a5f, #152642);
+            border: 2px solid #3a86ff;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .form-card .card-header {
+            background: linear-gradient(90deg, #1a4d80, #0a2d52);
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #3a86ff;
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffd700;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Кнопка отправки */
+        .btn-submit {
+            background: linear-gradient(45deg, #ff6b6b, #ffd166);
+            border: none;
+            color: #0d1b2a;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-submit::after {
+            content: "🎅";
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        /* Категории */
+        .category-title {
+            color: #4cc9f0;
+            text-align: center;
+            margin: 40px 0 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4cc9f0;
+            position: relative;
+            font-size: 2rem;
+        }
+
+        .category-title::before {
+            content: "✨";
+            position: absolute;
+            left: 10px;
+        }
+
+        .category-title::after {
+            content: "✨";
+            position: absolute;
+            right: 10px;
+        }
+
+        /* Сообщения */
+        .alert {
+            border-radius: 15px;
+            border: none;
+            font-weight: bold;
+        }
+
+        /* Новогодние украшения по углам */
+        .decoration {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 2;
+            opacity: 0.7;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .dec-1 { top: 20px; left: 20px; }
+        .dec-2 { top: 20px; right: 20px; }
+        .dec-3 { bottom: 20px; left: 20px; }
+        .dec-4 { bottom: 20px; right: 20px; }
+    </style>
+</head>
+<body>
+    <!-- Снег -->
+    <div class="snow-container" id="snow"></div>
+
+    <!-- Гирлянда -->
+    <div class="garland text-center" id="garland"></div>
+
+    <!-- Новогодние украшения -->
+    <div class="decoration dec-1">🎄</div>
+    <div class="decoration dec-2">🎁</div>
+    <div class="decoration dec-3">❄️</div>
+    <div class="decoration dec-4">🌟</div>
+
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="title-container">
+            <h1><i class="fas fa-star"></i> 🎄 НОВОГОДНЕЕ МЕНЮ 2026 🎄 <i class="fas fa-star"></i></h1>
+            <p class="text-center mt-3 mb-0">Выбери понравившиеся блюда для праздничного стола!</p>
+        </div>
+
+        <!-- Сообщения Django -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    <i class="fas fa-gift me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Форма заказа -->
+        <form method="post" action="{% url 'order_submit' %}">
+            {% csrf_token %}
+
+            <!-- Первые блюда -->
+            <div class="mb-5">
+                <h3 class="category-title"><i class="fas fa-utensils me-2"></i>Первые блюда</h3>
+                <div class="row">
+                    {% for dish in first_dishes %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card dish-card" data-type="first" data-id="{{ dish.id }}">
+                            {% if dish.png %}
+                                <img src="{{ dish.png.url }}" class="card-img-top" alt="{{ dish.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Новогоднее+блюдо" class="card-img-top" alt="{{ dish.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ dish.name }}</h5>
+                                <!-- ИЗМЕНЕНИЕ №2: radio → checkbox для выбора нескольких -->
+                                <input type="checkbox" name="first_dish" value="{{ dish.id }}"
+                                       id="first_{{ dish.id }}" class="d-none">
+                                <label for="first_{{ dish.id }}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-check me-2"></i>Выбрать
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-snowflake me-2"></i>Скоро добавим новогодние супчики!
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Салаты -->
+            <div class="mb-5">
+                <h3 class="category-title"><i class="fas fa-leaf me-2"></i>Салаты</h3>
+                <div class="row">
+                    {% for salad in salads %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card dish-card" data-type="salad" data-id="{{ salad.id }}">
+                            {% if salad.png %}
+                                <img src="{{ salad.png.url }}" class="card-img-top" alt="{{ salad.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Праздничный+салат" class="card-img-top" alt="{{ salad.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ salad.name }}</h5>
+                                <!-- ИЗМЕНЕНИЕ №2: radio → checkbox для выбора нескольких -->
+                                <input type="checkbox" name="salad" value="{{ salad.id }}"
+                                       id="salad_{{ salad.id }}" class="d-none">
+                                <label for="salad_{{ salad.id }}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-check me-2"></i>Выбрать
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-snowflake me-2"></i>Салаты готовятся к празднику!
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Закуски -->
+            <div class="mb-5">
+                <h3 class="category-title"><i class="fas fa-cheese me-2"></i>Закуски</h3>
+                <div class="row">
+                    {% for appetizer in appetizers %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card dish-card" data-type="appetizer" data-id="{{ appetizer.id }}">
+                            {% if appetizer.png %}
+                                <img src="{{ appetizer.png.url }}" class="card-img-top" alt="{{ appetizer.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Новогодняя+закуска" class="card-img-top" alt="{{ appetizer.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ appetizer.name }}</h5>
+
+                                <input type="checkbox" name="appetizer" value="{{ appetizer.id }}"
+                                       id="appetizer_{{ appetizer.id }}" class="d-none">
+                                <label for="appetizer_{{ appetizer.id }}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-check me-2"></i>Выбрать
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-snowflake me-2"></i>Закуски на подходе!
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Десерты -->
+            <div class="mb-5">
+                <h3 class="category-title"><i class="fas fa-birthday-cake me-2"></i>Десерты</h3>
+                <div class="row">
+                    {% for dessert in desserts %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card dish-card" data-type="dessert" data-id="{{ dessert.id }}">
+                            {% if dessert.png %}
+                                <img src="{{ dessert.png.url }}" class="card-img-top" alt="{{ dessert.name }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Сладкий+подарок" class="card-img-top" alt="{{ dessert.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ dessert.name }}</h5>
+                                <!-- ИЗМЕНЕНИЕ №2: radio → checkbox для выбора нескольких -->
+                                <input type="checkbox" name="dessert" value="{{ dessert.id }}"
+                                       id="dessert_{{ dessert.id }}" class="d-none">
+                                <label for="dessert_{{ dessert.id }}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-check me-2"></i>Выбрать
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-snowflake me-2"></i>Десерты скоро будут готовы!
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Форма данных -->
+            <div class="card form-card mb-5">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_customer_name" class="form-label">
+                                <i class="fas fa-snowman me-2"></i>Твое имя
+                            </label>
+                            <input type="text" class="form-control" id="id_customer_name"
+                                   name="customer_name" required placeholder="Напиши свое имя =)">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="id_comments" class="form-label">
+                                <i class="fas fa-star me-2"></i>
+                            </label>
+                            <textarea class="form-control" id="id_comments"
+                                      name="comments" rows="3"
+                                      placeholder="Особые пожелания..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка отправки -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-paper-plane me-2"></i>Отправить новогодний заказ!
+                </button>
+            </div>
+        </form>
+
+        <!-- Новогоднее поздравление -->
+        <div class="text-center mt-5 pt-4 border-top border-secondary">
+            <p class="h4 text-warning">
+                <i class="fas fa-tree"></i> С Наступающим Новым Годом! <i class="fas fa-tree"></i>
+            </p>
+            <p>Пусть этот праздник принесет много вкусных блюд и радости!</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript для новогодних эффектов -->
+    <script>
+        // Снег
+        function createSnow() {
+            const snowContainer = document.getElementById('snow');
+            for (let i = 0; i < 100; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snow');
+
+                // Случайные параметры
+                const size = Math.random() * 5 + 3;
+                const startX = Math.random() * 100;
+                const duration = Math.random() * 10 + 5;
+                const delay = Math.random() * 5;
+
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                snowflake.style.left = `${startX}vw`;
+                snowflake.style.animationDuration = `${duration}s`;
+                snowflake.style.animationDelay = `${delay}s`;
+
+                snowContainer.appendChild(snowflake);
+            }
+        }
+
+        // Гирлянда
+        function createGarland() {
+            const garland = document.getElementById('garland');
+            const colors = ['#ff0000', '#00ff00', '#ffff00', '#ff00ff', '#00ffff', '#ffa500'];
+
+            for (let i = 0; i < 30; i++) {
+                const light = document.createElement('span');
+                light.classList.add('light');
+                light.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                light.style.animationDelay = `${Math.random() * 2}s`;
+                garland.appendChild(light);
+            }
+        }
+
+        // Выбор блюда - ОБНОВЛЁН ДЛЯ CHECKBOX
+        document.addEventListener('DOMContentLoaded', function() {
+            createSnow();
+            createGarland();
+
+            // Обработка выбора блюда для CHECKBOX
+            document.querySelectorAll('.dish-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('label')) {
+                        const input = this.querySelector('input[type="checkbox"]');
+                        if (input) {
+                            // Для checkbox просто переключаем состояние
+                            input.checked = !input.checked;
+
+                            // Добавляем/убираем выделение
+                            if (input.checked) {
+                                this.classList.add('selected');
+                            } else {
+                                this.classList.remove('selected');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // При выборе через кнопку
+            document.querySelectorAll('.dish-card label').forEach(label => {
+                label.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const card = this.closest('.dish-card');
+                    const input = card.querySelector('input[type="checkbox"]');
+
+                    if (input) {
+                        input.checked = !input.checked;
+
+                        // Добавляем/убираем выделение
+                        if (input.checked) {
+                            card.classList.add('selected');
+                        } else {
+                            card.classList.remove('selected');
+                        }
+                    }
+                });
+            });
+
+            // Новогоднее поздравление при отправке
+            document.querySelector('form').addEventListener('submit', function(e) {
+                // Проверяем, выбрано ли хотя бы одно блюдо
+                const selectedCount = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                const name = document.getElementById('id_customer_name').value;
+
+                if (selectedCount === 0) {
+                    e.preventDefault();
+                    alert('🎅 Выбери хотя бы одно блюдо для новогоднего стола!');
+                    return;
+                }
+
+                if (!name) {
+                    e.preventDefault();
+                    alert('🎅 Не забудь указать свое имя!');
+                    return;
+                }
+
+                if (!confirm('🎅 Отправить новогодний заказ? После этого начнется волшебство!')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
