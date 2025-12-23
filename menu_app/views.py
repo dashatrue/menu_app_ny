@@ -69,32 +69,42 @@ class OrderSubmitView(View):
     def get_selected_dishes(self, cleaned_data):
         selected_dishes = {}
 
-        first_id = cleaned_data.get('first_dish')
-        if first_id:
+        # Для MultipleChoiceField получаем список, берём первый элемент
+        first_ids = cleaned_data.get('first_dish', [])
+        if first_ids:
             try:
-                selected_dishes['first'] = Dish.objects.get(id=first_id, category='first')
-            except Dish.DoesNotExist:
+                # Берём первый выбранный элемент из списка
+                first_id = first_ids[0] if first_ids else None
+                if first_id:
+                    selected_dishes['first'] = Dish.objects.get(id=int(first_id), category='first')
+            except (ValueError, Dish.DoesNotExist):
                 selected_dishes['first'] = None
 
-        salad_id = cleaned_data.get('salad')
-        if salad_id:
+        salad_ids = cleaned_data.get('salad', [])
+        if salad_ids:
             try:
-                selected_dishes['salad'] = Dish.objects.get(id=salad_id, category='salad')
-            except Dish.DoesNotExist:
+                salad_id = salad_ids[0] if salad_ids else None
+                if salad_id:
+                    selected_dishes['salad'] = Dish.objects.get(id=int(salad_id), category='salad')
+            except (ValueError, Dish.DoesNotExist):
                 selected_dishes['salad'] = None
 
-        appetizer_id = cleaned_data.get('appetizer')
-        if appetizer_id:
+        appetizer_ids = cleaned_data.get('appetizer', [])
+        if appetizer_ids:
             try:
-                selected_dishes['appetizer'] = Dish.objects.get(id=appetizer_id, category='appetizer')
-            except Dish.DoesNotExist:
+                appetizer_id = appetizer_ids[0] if appetizer_ids else None
+                if appetizer_id:
+                    selected_dishes['appetizer'] = Dish.objects.get(id=int(appetizer_id), category='appetizer')
+            except (ValueError, Dish.DoesNotExist):
                 selected_dishes['appetizer'] = None
 
-        dessert_id = cleaned_data.get('dessert')
-        if dessert_id:
+        dessert_ids = cleaned_data.get('dessert', [])
+        if dessert_ids:
             try:
-                selected_dishes['dessert'] = Dish.objects.get(id=dessert_id, category='dessert')
-            except Dish.DoesNotExist:
+                dessert_id = dessert_ids[0] if dessert_ids else None
+                if dessert_id:
+                    selected_dishes['dessert'] = Dish.objects.get(id=int(dessert_id), category='dessert')
+            except (ValueError, Dish.DoesNotExist):
                 selected_dishes['dessert'] = None
 
         return selected_dishes
