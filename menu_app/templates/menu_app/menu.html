@@ -72,7 +72,7 @@
             50% { opacity: 1; }
         }
 
-        /* Основной контейнер */
+        /* Основной контейнер -->
         .container {
             background: rgba(13, 27, 42, 0.85);
             border-radius: 20px;
@@ -85,7 +85,7 @@
             z-index: 3;
         }
 
-        /* Заголовок */
+        /* Заголовок -->
         .title-container {
             background: linear-gradient(45deg, #1a4d80, #0a2d52);
             padding: 25px;
@@ -122,7 +122,7 @@
             text-align: center;
         }
 
-        /* Карточки блюд */
+        /* Карточки блюд -->
         .dish-card {
             background: linear-gradient(145deg, #1e3a5f, #152642);
             border: 2px solid #3a86ff;
@@ -165,7 +165,7 @@
             50% { transform: scale(1.1); }
         }
 
-        /* ФИКСИРОВАННЫЙ РАЗМЕР КАРТИНОК - ИЗМЕНЕНИЕ №1 */
+        /* ФИКСИРОВАННЫЙ РАЗМЕР КАРТИНОК - ИЗМЕНЕНИЕ №1 -->
         .card-img-top {
             width: 100%;           /* Занимает всю ширину карточки */
             height: 200px;         /* Фиксированная высота */
@@ -185,7 +185,7 @@
             margin-bottom: 15px;
         }
 
-        /* Кнопки */
+        /* Кнопки -->
         .btn-outline-primary {
             color: #4cc9f0;
             border-color: #4cc9f0;
@@ -200,7 +200,7 @@
             transform: scale(1.05);
         }
 
-        /* Форма данных */
+        /* Форма данных -->
         .form-card {
             background: linear-gradient(145deg, #1e3a5f, #152642);
             border: 2px solid #3a86ff;
@@ -232,7 +232,7 @@
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
-        /* Кнопка отправки */
+        /* Кнопка отправки -->
         .btn-submit {
             background: linear-gradient(45deg, #ff6b6b, #ffd166);
             border: none;
@@ -260,7 +260,7 @@
             font-size: 1.5rem;
         }
 
-        /* Категории */
+        <!-- Категории -->
         .category-title {
             color: #4cc9f0;
             text-align: center;
@@ -283,14 +283,14 @@
             right: 10px;
         }
 
-        /* Сообщения */
+        <!-- Сообщения -->
         .alert {
             border-radius: 15px;
             border: none;
             font-weight: bold;
         }
 
-        /* Новогодние украшения по углам */
+        <!-- Новогодние украшения по углам -->
         .decoration {
             position: absolute;
             font-size: 2rem;
@@ -351,8 +351,9 @@
                     {% for dish in first_dishes %}
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="card dish-card" data-type="first" data-id="{{ dish.id }}">
-                            {% if dish.png %}
-                                <img src="{{ dish.png.url }}" class="card-img-top" alt="{{ dish.name }}">
+                            {% if dish.image_url %}
+                                <!-- ИЗМЕНЕНИЕ: dish.png.url → dish.image_url -->
+                                <img src="{{ dish.image_url }}" class="card-img-top" alt="{{ dish.name }}">
                             {% else %}
                                 <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Новогоднее+блюдо" class="card-img-top" alt="{{ dish.name }}">
                             {% endif %}
@@ -381,20 +382,21 @@
             <div class="mb-5">
                 <h3 class="category-title"><i class="fas fa-leaf me-2"></i>Салаты</h3>
                 <div class="row">
-                    {% for salad in salads %}
+                    {% for dish in salads %}
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="card dish-card" data-type="salad" data-id="{{ salad.id }}">
-                            {% if salad.png %}
-                                <img src="{{ salad.png.url }}" class="card-img-top" alt="{{ salad.name }}">
+                        <div class="card dish-card" data-type="salad" data-id="{{ dish.id }}">
+                            {% if dish.image_url %}
+                                <!-- ИЗМЕНЕНИЕ: salad.png.url → dish.image_url -->
+                                <img src="{{ dish.image_url }}" class="card-img-top" alt="{{ dish.name }}">
                             {% else %}
-                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Праздничный+салат" class="card-img-top" alt="{{ salad.name }}">
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Праздничный+салат" class="card-img-top" alt="{{ dish.name }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title">{{ salad.name }}</h5>
+                                <h5 class="card-title">{{ dish.name }}</h5>
                                 <!-- ИЗМЕНЕНИЕ №2: radio → checkbox для выбора нескольких -->
-                                <input type="checkbox" name="salad" value="{{ salad.id }}"
-                                       id="salad_{{ salad.id }}" class="d-none">
-                                <label for="salad_{{ salad.id }}" class="btn btn-outline-primary w-100">
+                                <input type="checkbox" name="salad" value="{{ dish.id }}"
+                                       id="salad_{{ dish.id }}" class="d-none">
+                                <label for="salad_{{ dish.id }}" class="btn btn-outline-primary w-100">
                                     <i class="fas fa-check me-2"></i>Выбрать
                                 </label>
                             </div>
@@ -414,20 +416,21 @@
             <div class="mb-5">
                 <h3 class="category-title"><i class="fas fa-cheese me-2"></i>Закуски</h3>
                 <div class="row">
-                    {% for appetizer in appetizers %}
+                    {% for dish in appetizers %}
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="card dish-card" data-type="appetizer" data-id="{{ appetizer.id }}">
-                            {% if appetizer.png %}
-                                <img src="{{ appetizer.png.url }}" class="card-img-top" alt="{{ appetizer.name }}">
+                        <div class="card dish-card" data-type="appetizer" data-id="{{ dish.id }}">
+                            {% if dish.image_url %}
+                                <!-- ИЗМЕНЕНИЕ: appetizer.png.url → dish.image_url -->
+                                <img src="{{ dish.image_url }}" class="card-img-top" alt="{{ dish.name }}">
                             {% else %}
-                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Новогодняя+закуска" class="card-img-top" alt="{{ appetizer.name }}">
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Новогодняя+закуска" class="card-img-top" alt="{{ dish.name }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title">{{ appetizer.name }}</h5>
+                                <h5 class="card-title">{{ dish.name }}</h5>
 
-                                <input type="checkbox" name="appetizer" value="{{ appetizer.id }}"
-                                       id="appetizer_{{ appetizer.id }}" class="d-none">
-                                <label for="appetizer_{{ appetizer.id }}" class="btn btn-outline-primary w-100">
+                                <input type="checkbox" name="appetizer" value="{{ dish.id }}"
+                                       id="appetizer_{{ dish.id }}" class="d-none">
+                                <label for="appetizer_{{ dish.id }}" class="btn btn-outline-primary w-100">
                                     <i class="fas fa-check me-2"></i>Выбрать
                                 </label>
                             </div>
@@ -447,20 +450,21 @@
             <div class="mb-5">
                 <h3 class="category-title"><i class="fas fa-birthday-cake me-2"></i>Десерты</h3>
                 <div class="row">
-                    {% for dessert in desserts %}
+                    {% for dish in desserts %}
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="card dish-card" data-type="dessert" data-id="{{ dessert.id }}">
-                            {% if dessert.png %}
-                                <img src="{{ dessert.png.url }}" class="card-img-top" alt="{{ dessert.name }}">
+                        <div class="card dish-card" data-type="dessert" data-id="{{ dish.id }}">
+                            {% if dish.image_url %}
+                                <!-- ИЗМЕНЕНИЕ: dessert.png.url → dish.image_url -->
+                                <img src="{{ dish.image_url }}" class="card-img-top" alt="{{ dish.name }}">
                             {% else %}
-                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Сладкий+подарок" class="card-img-top" alt="{{ dessert.name }}">
+                                <img src="https://via.placeholder.com/300x200/1e3a5f/e0e1dd?text=Сладкий+подарок" class="card-img-top" alt="{{ dish.name }}">
                             {% endif %}
                             <div class="card-body">
-                                <h5 class="card-title">{{ dessert.name }}</h5>
+                                <h5 class="card-title">{{ dish.name }}</h5>
                                 <!-- ИЗМЕНЕНИЕ №2: radio → checkbox для выбора нескольких -->
-                                <input type="checkbox" name="dessert" value="{{ dessert.id }}"
-                                       id="dessert_{{ dessert.id }}" class="d-none">
-                                <label for="dessert_{{ dessert.id }}" class="btn btn-outline-primary w-100">
+                                <input type="checkbox" name="dessert" value="{{ dish.id }}"
+                                       id="dessert_{{ dish.id }}" class="d-none">
+                                <label for="dessert_{{ dish.id }}" class="btn btn-outline-primary w-100">
                                     <i class="fas fa-check me-2"></i>Выбрать
                                 </label>
                             </div>
@@ -489,7 +493,7 @@
                         </div>
                         <div class="col-12 mb-3">
                             <label for="id_comments" class="form-label">
-                                <i class="fas fa-star me-2"></i>
+                                <i class="fas fa-star me-2"></i>Комментарии к заказу
                             </label>
                             <textarea class="form-control" id="id_comments"
                                       name="comments" rows="3"

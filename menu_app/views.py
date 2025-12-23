@@ -2,9 +2,9 @@ from django.shortcuts import render, redirect
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
 from django.contrib import messages
-from django.views.generic import ListView, TemplateView
+from django.views.generic import TemplateView
 from django.views import View
-from .models import First, Salad, Appetizer, Dessert
+from .models import Dish
 from .forms import OrderForm
 
 
@@ -13,10 +13,11 @@ class MenuView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['first_dishes'] = First.objects.all()
-        context['salads'] = Salad.objects.all()
-        context['appetizers'] = Appetizer.objects.all()
-        context['desserts'] = Dessert.objects.all()
+        # Получаем блюда по категориям из одной модели
+        context['first_dishes'] = Dish.objects.filter(category='first')
+        context['salads'] = Dish.objects.filter(category='salad')
+        context['appetizers'] = Dish.objects.filter(category='appetizer')
+        context['desserts'] = Dish.objects.filter(category='dessert')
         context['form'] = OrderForm()
         return context
 
@@ -55,10 +56,10 @@ class OrderSubmitView(View):
 
             else:
                 context = {
-                    'first_dishes': First.objects.all(),
-                    'salads': Salad.objects.all(),
-                    'appetizers': Appetizer.objects.all(),
-                    'desserts': Dessert.objects.all(),
+                    'first_dishes': Dish.objects.filter(category='first'),
+                    'salads': Dish.objects.filter(category='salad'),
+                    'appetizers': Dish.objects.filter(category='appetizer'),
+                    'desserts': Dish.objects.filter(category='dessert'),
                     'form': form,
                 }
                 return render(request, 'menu_app/menu.html', context)
@@ -69,29 +70,29 @@ class OrderSubmitView(View):
         first_id = cleaned_data.get('first_dish')
         if first_id:
             try:
-                selected_dishes['first'] = First.objects.get(id=first_id)
-            except First.DoesNotExist:
+                selected_dishes['first'] = Dish.objects.get(id=first_id, category='first')
+            except Dish.DoesNotExist:
                 selected_dishes['first'] = None
 
         salad_id = cleaned_data.get('salad')
         if salad_id:
             try:
-                selected_dishes['salad'] = Salad.objects.get(id=salad_id)
-            except Salad.DoesNotExist:
+                selected_dishes['salad'] = Dish.objects.get(id=salad_id, category='salad')
+            except Dish.DoesNotExist:
                 selected_dishes['salad'] = None
 
         appetizer_id = cleaned_data.get('appetizer')
         if appetizer_id:
             try:
-                selected_dishes['appetizer'] = Appetizer.objects.get(id=appetizer_id)
-            except Appetizer.DoesNotExist:
+                selected_dishes['appetizer'] = Dish.objects.get(id=appetizer_id, category='appetizer')
+            except Dish.DoesNotExist:
                 selected_dishes['appetizer'] = None
 
         dessert_id = cleaned_data.get('dessert')
         if dessert_id:
             try:
-                selected_dishes['dessert'] = Dessert.objects.get(id=dessert_id)
-            except Dessert.DoesNotExist:
+                selected_dishes['dessert'] = Dish.objects.get(id=dessert_id, category='dessert')
+            except Dish.DoesNotExist:
                 selected_dishes['dessert'] = None
 
         return selected_dishes
